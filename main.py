@@ -16,11 +16,20 @@ This tool normalizes a SaaS company's Income Statement to find its "Steady State
 It separates "Growth Investment" from "Maintenance" spend to reveal the true earnings power.
 """)
 
-# --- DATA LAYER ---
-fetcher = SECFetcher()
+# --- CACHED HELPERS ---
+@st.cache_data(show_spinner=False)
+def load_financials(ticker: str):
+    return SECFetcher().get_financials(ticker)
 
-# --- AI ANALYZER ---
-@st.cache_data
+@st.cache_data(show_spinner=False)
+def load_mda_text(ticker: str):
+    return SECFetcher().get_mda_text(ticker)
+
+@st.cache_data(show_spinner=False)
+def load_market_data(ticker: str):
+    return get_market_snapshot(ticker)
+
+@st.cache_data(show_spinner=False)
 def get_ai_estimates(mda_text, financials):
     return analyze_growth_spend(mda_text, financials)
 
@@ -34,15 +43,29 @@ with st.sidebar:
     st.markdown("### 🤖 AI Sensitivity Overrides")
     st.caption("Adjust the AI's estimated maintenance split.")
 
-    # Fetch Data First to get AI defaults
-    financials = fetcher.get_financials(ticker_input)
-    mda_text = fetcher.get_mda_text(ticker_input)
-    market_data = get_market_snapshot(ticker_input)
+    # Ticker Validation
+    ticker_clean = ticker_input.strip().upper()
+    if not ticker_clean or not (1 <= len(ticker_clean) <= 5) or not ticker_clean.isalpha():
+        st.error("Invalid Ticker. Please enter 1-5 letters (e.g., AAPL, SHOP).")
+        st.stop()
     
-    # Run AI (or get cached)
-    ai_result = get_ai_estimates(mda_text, financials)
+    # Fetch Data First to get AI defaults
+    with st.spinner("Analyzing financials & SEC filings..."):
+        financials = load_financials(ticker_clean)
+        mda_result = load_mda_text(ticker_clean)
+        market_data = load_market_data(ticker_clean)
+        
+        # Run AI (or get cached)
+        ai_result = get_ai_estimates(mda_result['text'], financials)
     
     # Interactive Sliders initialized with AI values
+    # Display current assumption overrides inline if possible
+    st.markdown(f"""
+        <div style='margin-bottom: 10px; font-size: 12px; color: #666;'>
+            Current Assumptions: Maint S&M <b>{float(ai_result['maintenance_sga_percent']):.2f}</b> • Maint R&D <b>{float(ai_result['maintenance_rnd_percent']):.2f}</b>
+        </div>
+    """, unsafe_allow_html=True)
+
     maint_sga = st.slider(
         "Maintenance S&M %", 
         0.0, 1.0, 
@@ -62,10 +85,26 @@ with st.sidebar:
 
 # --- MAIN APP LOGIC ---
 if market_data.get('company_name'):
-    st.header(f"{market_data['company_name']}")
-    st.caption(f"{ticker_input} • Current Price: ${market_data['price']:.2f}")
+    col_title, col_badge = st.columns([3, 1])
+    with col_title:
+        st.header(f"{market_data['company_name']}")
+        
+        # Market Data Freshness
+        price_suffix = " (Demo values)" if market_data.get("is_mock") else f" (As of {pd.Timestamp.now().strftime('%H:%M')})"
+        st.caption(f"{ticker_clean} • Current Price: ${market_data['price']:.2f}{price_suffix}")
+        
+    with col_badge:
+        # Status Badges
+        if market_data.get("is_mock") or financials.get("is_mock"):
+            st.markdown("#### <span style='background-color:#FFD700; color:black; padding:4px 8px; border-radius:4px; font-size:14px;'>⚠️ Mock Data</span>", unsafe_allow_html=True)
+        else:
+            st.markdown("#### <span style='background-color:#34C759; color:white; padding:4px 8px; border-radius:4px; font-size:14px;'>● Live Data</span>", unsafe_allow_html=True)
+        
+        if mda_result.get("is_mock"):
+            st.caption("Using Mock MD&A (SEC Fetch Failed)")
+
 else:
-    st.header(f"Analysis for {ticker_input}")
+    st.header(f"Analysis for {ticker_clean}")
 
 # Run Financial Model
 model = GreenwaldEPV()
@@ -129,9 +168,12 @@ with col2:
     
     # Metrics Row
     m1, m2, m3 = st.columns(3)
-    m1.metric(label="Firm EPV", value=f"${firm_epv/1e9:.1f}B", help="Operations Value")
+    m1.metric(label="Firm EPV", value=f"${firm_epv/1e9:.1f}B", help="Operations Value (Zero Growth)")
     m2.metric(label="Net Cash", value=f"${(cash - debt)/1e9:.1f}B", help="Cash - Debt")
     m3.metric(label="Equity EPV", value=f"${equity_epv/1e9:.1f}B", help="Target Market Cap")
+    
+    # Footnote for EPV
+    st.caption("Note: Firm EPV assumes zero growth. It is the steady-state earnings power capitalized at WACC.")
     
     st.markdown("#### Per Share Analysis")
     
@@ -152,7 +194,18 @@ with col2:
     
     d1, d2 = st.columns(2)
     d1.metric(label="Reproduction Value (Assets)", value=f"${repro_value/1e9:.1f}B", help="Cost to replicate the platform (Book Equity + R&D Adj)")
-    d2.metric(label="Franchise Value (Moat)", value=f"${franchise_value/1e9:.1f}B", delta=f"${franchise_value/1e9:.1f}B", help="EPV - Reproduction Value")
+    
+    moat_delta_color = "normal" if franchise_value > 0 else "inverse"
+    d2.metric(
+        label="Franchise Value (Moat)", 
+        value=f"${franchise_value/1e9:.1f}B", 
+        delta=f"${franchise_value/1e9:.1f}B", 
+        delta_color=moat_delta_color,
+        help="EPV - Reproduction Value"
+    )
+    
+    # Footnote for Moat
+    st.caption("Note: Reproduction Value capitalizes R&D over 3 years as a proxy for intangible asset replacement cost.")
     
     if franchise_value > 0:
         st.success(f"**Wide Moat:** The business generates returns significantly above the cost to replicate its assets. (Franchise Value is {franchise_value/firm_epv*100:.0f}% of Firm EPV)")
@@ -174,38 +227,74 @@ st.markdown("---")
 
 # --- CHARTING ---
 st.subheader("GAAP vs True Earnings Power")
-chart_df = pd.DataFrame({
-    "Metric": ["Reported EBIT", "Normalized EBIT"],
-    "Amount ($B)": [financials['ebit'] / 1e9, results['normalized_ebit'] / 1e9]
-})
 
-fig = px.bar(
-    chart_df, 
-    x="Metric", 
-    y="Amount ($B)", 
-    color="Metric",
-    color_discrete_map={"Reported EBIT": "#FF3B30", "Normalized EBIT": "#007AFF"},
-    text_auto='.1f'
-)
-fig.update_layout(
-    plot_bgcolor="rgba(0,0,0,0)",
-    paper_bgcolor="rgba(0,0,0,0)",
-    font_family="-apple-system, BlinkMacSystemFont, sans-serif",
-    showlegend=False,
-    margin=dict(l=20, r=20, t=30, b=20),
-    yaxis=dict(showgrid=True, gridcolor="#E5E5E5"),
-    xaxis=dict(showgrid=False)
-)
-st.plotly_chart(fig, use_container_width=True)
+# Create two charts side-by-side
+chart_col1, chart_col2 = st.columns(2)
+
+with chart_col1:
+    st.caption("Earnings Impact ($B)")
+    earnings_df = pd.DataFrame({
+        "Metric": ["Reported EBIT", "Normalized EBIT"],
+        "Amount ($B)": [financials['ebit'] / 1e9, results['normalized_ebit'] / 1e9]
+    })
+    fig_earnings = px.bar(
+        earnings_df, 
+        x="Metric", 
+        y="Amount ($B)", 
+        color="Metric",
+        color_discrete_map={"Reported EBIT": "#FF3B30", "Normalized EBIT": "#007AFF"},
+        text_auto='.1f'
+    )
+    fig_earnings.update_layout(
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        font_family="-apple-system, BlinkMacSystemFont, sans-serif",
+        showlegend=False,
+        margin=dict(l=20, r=20, t=30, b=20),
+        yaxis=dict(showgrid=True, gridcolor="#E5E5E5"),
+        xaxis=dict(showgrid=False)
+    )
+    st.plotly_chart(fig_earnings, use_container_width=True)
+
+with chart_col2:
+    st.caption("Valuation Gap ($B)")
+    val_df = pd.DataFrame({
+        "Metric": ["Market Cap", "Equity EPV"],
+        "Value ($B)": [mcap_billions, equity_epv / 1e9]
+    })
+    fig_val = px.bar(
+        val_df,
+        x="Metric",
+        y="Value ($B)",
+        color="Metric",
+        color_discrete_map={"Market Cap": "#8E8E93", "Equity EPV": "#34C759"},
+        text_auto='.1f'
+    )
+    fig_val.update_layout(
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        font_family="-apple-system, BlinkMacSystemFont, sans-serif",
+        showlegend=False,
+        margin=dict(l=20, r=20, t=30, b=20),
+        yaxis=dict(showgrid=True, gridcolor="#E5E5E5"),
+        xaxis=dict(showgrid=False)
+    )
+    st.plotly_chart(fig_val, use_container_width=True)
 
 st.markdown("---")
 
 # AI Reasoning Section
 st.subheader("🧐 AI Analyst Reasoning")
-if "⚠️" in ai_result['reasoning']:
-    st.warning(ai_result['reasoning'])
-else:
-    st.info(ai_result['reasoning'])
+with st.expander("See Detailed Analysis", expanded=False):
+    if "⚠️" in ai_result['reasoning']:
+        st.warning(ai_result['reasoning'])
+    else:
+        st.info(ai_result['reasoning'])
+    
+    st.markdown("### Detailed Adjustments")
+    st.json(current_adjustments)
 
-st.markdown("### Detailed Adjustments")
-st.json(current_adjustments)
+# Summary Chip
+summary_text = f"AI Estimate: {ai_result['maintenance_sga_percent']*100:.0f}% Maint S&M, {ai_result['maintenance_rnd_percent']*100:.0f}% Maint R&D"
+st.caption(f"Summary: {summary_text}")
+
