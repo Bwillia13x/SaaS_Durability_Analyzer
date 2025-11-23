@@ -39,12 +39,12 @@ def get_ai_estimates(mda_text, financials):
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.markdown("## ⚙️ Analysis Parameters")
+    st.markdown("## Analysis Parameters")
     ticker_input = st.text_input("Ticker Symbol", value="SHOP", placeholder="e.g., AAPL, SHOP, NFLX")
     cost_of_capital = st.slider("Cost of Capital (WACC)", 0.05, 0.15, 0.10, 0.005, help="Weighted Average Cost of Capital")
     
     st.divider()
-    st.markdown("### 🤖 AI Sensitivity Overrides")
+    st.markdown("### AI Sensitivity Overrides")
     st.caption("Customize the AI's estimated maintenance split.")
 
     # Ticker Validation
@@ -101,9 +101,9 @@ if market_data.get('company_name'):
     with col_badge:
         # Status Badges
         if market_data.get("is_mock") or financials.get("is_mock"):
-            st.markdown("#### <span style='background-color:#FFD700; color:black; padding:4px 8px; border-radius:4px; font-size:14px;'>⚠️ Mock Data</span>", unsafe_allow_html=True)
+            st.markdown("#### <span style='background-color:#FFD700; color:black; padding:4px 8px; border-radius:4px; font-size:14px;'>Mock Data</span>", unsafe_allow_html=True)
         else:
-            st.markdown("#### <span style='background-color:#34C759; color:white; padding:4px 8px; border-radius:4px; font-size:14px;'>● Live Data</span>", unsafe_allow_html=True)
+            st.markdown("#### <span style='background-color:#34C759; color:white; padding:4px 8px; border-radius:4px; font-size:14px;'>Live Data</span>", unsafe_allow_html=True)
         
         if mda_result.get("is_mock"):
             st.caption("Using Mock MD&A (SEC Fetch Failed)")
@@ -134,7 +134,7 @@ rule_40_adj = model.calculate_rule_of_40(rev_growth, adj_margin)
 col1, col2 = st.columns([1, 1.2], gap="large")
 
 with col1:
-    st.markdown("### 📈 GAAP (Reported)")
+    st.markdown("### GAAP (Reported)")
     st.metric(label="Reported EBIT", value=f"${financials['ebit']/1e9:.1f}B", delta_color="off")
     st.metric(label="Rule of 40", value=f"{rule_40_gaap:.1f}%")
     
@@ -143,7 +143,7 @@ with col1:
         st.caption("*Reported earnings heavily penalized by Growth Capex*")
 
 with col2:
-    st.markdown("### 🚀 AI-Adjusted EPV")
+    st.markdown("### AI-Adjusted EPV")
     
     # Metrics Grid
     c1, c2 = st.columns(2)
@@ -151,7 +151,7 @@ with col2:
     c2.metric(label="Adjusted Rule of 40", value=f"{rule_40_adj:.1f}%", delta=f"{rule_40_adj - rule_40_gaap:.1f}% Upgrade")
     
     if rule_40_adj >= 40:
-        st.success(f"✓ **Strong:** Rule of 40 = {rule_40_adj:.1f}% (Growth {rev_growth:.1f}% + Margin {adj_margin:.1f}%)")
+        st.success(f"**Strong Performance:** Rule of 40 = {rule_40_adj:.1f}% (Growth {rev_growth:.1f}% + Margin {adj_margin:.1f}%)")
     else:
         st.info(f"Rule of 40 = {rule_40_adj:.1f}% (Growth {rev_growth:.1f}% + Margin {adj_margin:.1f}%)")
     
@@ -173,7 +173,7 @@ with col2:
     repro_value = model.calculate_reproduction_value(financials)
     franchise_value = firm_epv - repro_value
     
-    st.markdown("### 💎 Valuation Conclusion")
+    st.markdown("### Valuation Conclusion")
     
     # Metrics Row
     m1, m2, m3 = st.columns(3)
@@ -184,7 +184,7 @@ with col2:
     # Footnote for EPV
     st.caption("Note: Firm EPV assumes zero growth. It is the steady-state earnings power capitalized at WACC.")
     
-    st.markdown("#### 📌 Per Share Analysis")
+    st.markdown("#### Per Share Analysis")
     
     # Per Share Metrics
     ps1, ps2, ps3 = st.columns(3)
@@ -198,7 +198,7 @@ with col2:
         ps3.metric(label="Downside", value=f"{upside:.1f}%", delta=f"{upside:.1f}%")
     
     st.markdown("---")
-    st.markdown("### 🏰 Durability & Moat Analysis")
+    st.markdown("### Durability & Moat Analysis")
     st.markdown("<p style='color: #86868B; font-size: 14px; margin-bottom: 1rem;'>Earnings Power (EPV) vs. Cost to Replicate. Positive Franchise Value indicates a competitive moat.</p>", unsafe_allow_html=True)
     
     d1, d2 = st.columns(2)
@@ -235,7 +235,7 @@ with col2:
 st.markdown("---")
 
 # --- CHARTING ---
-st.markdown("### 📊 GAAP vs True Earnings Power")
+st.markdown("### GAAP vs True Earnings Power")
 
 # Create two charts side-by-side
 chart_col1, chart_col2 = st.columns(2)
@@ -293,7 +293,7 @@ with chart_col2:
 st.markdown("---")
 
 # AI Reasoning Section
-st.markdown("### 🧐 AI Analyst Reasoning")
+st.markdown("### AI Analyst Reasoning")
 with st.expander("See Detailed Analysis", expanded=False):
     if "⚠️" in ai_result['reasoning']:
         st.warning(ai_result['reasoning'])

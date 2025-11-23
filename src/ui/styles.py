@@ -40,24 +40,31 @@ def apply_ive_style():
         h1 {
             font-size: 2.75rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #1D1D1F 0%, #424245 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
+            color: #1D1D1F;
+            margin-bottom: 1rem;
         }
         
         h2 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             color: #1D1D1F;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid rgba(0, 122, 255, 0.2);
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
         }
         
         h3 {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             color: #1D1D1F;
+            font-weight: 600;
             margin-top: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        h4 {
+            font-size: 1.05rem;
+            color: #1D1D1F;
+            font-weight: 500;
+            margin-top: 1rem;
         }
         
         p, label, .stMarkdown {
@@ -68,18 +75,18 @@ def apply_ive_style():
         
         /* Metrics Cards - Enhanced */
         [data-testid="stMetric"] {
-            background: linear-gradient(135deg, #FFFFFF 0%, #FAFAFA 100%);
+            background: #FFFFFF;
             padding: 24px;
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-            border: 1px solid #F0F0F0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #EFEFEF;
+            transition: all 0.25s ease;
         }
         
         [data-testid="stMetric"]:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 28px rgba(0, 122, 255, 0.12);
-            border-color: rgba(0, 122, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            border-color: #E5E5E5;
         }
         
         [data-testid="stMetricLabel"] {
