@@ -39,6 +39,13 @@ This project is configured to run on Replit with:
 - **Python 3.11**
 - **Streamlit** running on `0.0.0.0:5000`
 - CORS and XSRF protection disabled for Replit proxy compatibility
+- **PostgreSQL Database**: Development database is provisioned and ready
+
+### Database Configuration
+A PostgreSQL database is available for development:
+- **Access**: Via `DATABASE_URL` environment variable
+- **Environment Variables**: `PGHOST`, `PGPORT`, `PGUSER`, `PGPASSWORD`, `PGDATABASE`
+- **Status**: Ready to use for future features that may require data persistence
 
 ## Running the Application
 The application runs automatically via the configured workflow. To manually start:
@@ -87,3 +94,4 @@ None specified yet.
   - Set up Streamlit configuration for port 5000 with CORS disabled
   - Configured workflow and deployment settings
   - Created project documentation
+  - Set up PostgreSQL development database
