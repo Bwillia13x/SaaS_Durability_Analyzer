@@ -3,26 +3,34 @@
 class GreenwaldEPV:
     def calculate_reproduction_value(self, balance_sheet):
         """
-        Step 1: Estimate the cost to replicate the asset base (simplified SaaS heuristic).
-        Uses book equity when available; otherwise builds a net asset proxy and capitalizes R&D.
+        Estimate replacement cost of operating assets (simplified):
+        - Excludes cash to avoid cash double-count when computing franchise value.
+        - Uses invested-capital style proxy: working capital + PPE + capitalized current R&D (3-year).
+        - If book equity is missing, falls back to net operating assets proxy (excluding cash).
         """
-        book_equity = balance_sheet.get('book_value_equity')
-
-        # Build a simple net asset proxy in case book equity is missing or zero
         cash = balance_sheet.get('cash', 0)
         accounts_receivable = balance_sheet.get('accounts_receivable', 0)
         pp_and_e = balance_sheet.get('pp_and_e', 0)
         other_assets = balance_sheet.get('other_assets', 0)
         total_current_liabilities = balance_sheet.get('total_current_liabilities', 0)
 
-        net_asset_proxy = (cash + accounts_receivable + other_assets + pp_and_e) - total_current_liabilities
+        # Net operating working capital (excluding cash)
+        net_working_capital = (accounts_receivable + other_assets) - total_current_liabilities
 
-        # Capitalize R&D as a proxy for intangible replacement cost (3-year horizon)
+        # Capitalize current R&D as a proxy for product/platform replacement
         rnd = balance_sheet.get('rnd', 0)
-        intellectual_property_adj = rnd * 3
+        capitalized_rnd = rnd * 3
 
-        base_value = book_equity if book_equity not in (None, 0) else net_asset_proxy
-        return base_value + max(intellectual_property_adj, 0)
+        # Invested capital proxy (ex-cash)
+        reproduction_value = net_working_capital + pp_and_e + capitalized_rnd
+
+        # If book equity is available and higher, use it as a floor but still exclude cash double count
+        book_equity = balance_sheet.get('book_value_equity')
+        if book_equity not in (None, 0):
+            reproduction_value = max(reproduction_value, book_equity - cash)
+
+        # Do not allow negative reproduction values
+        return max(reproduction_value, 0)
 
     def calculate_normalized_earnings(self, income_stmt, ai_adjustments):
         """

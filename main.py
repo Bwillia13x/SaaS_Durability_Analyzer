@@ -117,7 +117,8 @@ results = model.calculate_normalized_earnings(financials, current_adjustments)
 epv_value = model.get_epv(results['nopat'], cost_of_capital)
 
 # Rule of 40 Calcs
-rev_growth = (financials['revenue'] - financials['prev_revenue']) / financials['prev_revenue'] * 100
+prev_revenue = financials['prev_revenue'] or 1  # guard against divide-by-zero
+rev_growth = (financials['revenue'] - prev_revenue) / prev_revenue * 100
 gaap_margin = financials['ebit'] / financials['revenue'] * 100
 adj_margin = results['nopat'] / financials['revenue'] * 100
 
@@ -160,7 +161,7 @@ with col2:
     equity_epv = model.calculate_equity_value(firm_epv, cash, debt)
     epv_per_share = equity_epv / shares
     
-    # Calculate Reproduction Value (Assets)
+    # Calculate Reproduction Value (Operating Assets, ex-cash) to avoid cash double-count
     repro_value = model.calculate_reproduction_value(financials)
     franchise_value = firm_epv - repro_value
     
@@ -205,7 +206,7 @@ with col2:
     )
     
     # Footnote for Moat
-    st.caption("Note: Reproduction Value capitalizes R&D over 3 years as a proxy for intangible asset replacement cost.")
+    st.caption("Note: Reproduction Value excludes cash to avoid double-counting and capitalizes current R&D over 3 years as a proxy for product/platform replacement.")
     
     if franchise_value > 0:
         st.success(f"**Wide Moat:** The business generates returns significantly above the cost to replicate its assets. (Franchise Value is {franchise_value/firm_epv*100:.0f}% of Firm EPV)")
@@ -297,4 +298,3 @@ with st.expander("See Detailed Analysis", expanded=False):
 # Summary Chip
 summary_text = f"AI Estimate: {ai_result['maintenance_sga_percent']*100:.0f}% Maint S&M, {ai_result['maintenance_rnd_percent']*100:.0f}% Maint R&D"
 st.caption(f"Summary: {summary_text}")
-
