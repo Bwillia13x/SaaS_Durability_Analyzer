@@ -53,22 +53,20 @@ The application runs automatically via the configured workflow. To manually star
 streamlit run main.py
 ```
 
-## Optional API Keys
-The application works with mock data by default but can use real data with these optional API keys:
+## API Keys Configuration
+The application is configured to use optional API keys for enhanced features:
 
 ### OpenAI (for AI analysis)
-- **Key**: `OPENAI_API_KEY`
+- **Status**: ✓ Configured
 - **Purpose**: Analyzes SEC filings to estimate maintenance vs growth spending
 - **Fallback**: Uses simulated analysis with reasonable defaults
-
-### Financial Modeling Prep (for enhanced financial data)
-- **Key**: `FMP_API_KEY`
-- **Purpose**: More reliable financial data than Yahoo Finance
-- **Fallback**: Uses Yahoo Finance or mock data
-
-### OpenAI Model Configuration
 - **Model**: `OPENAI_MODEL` (default: gpt-5.1, fallback: gpt-4o)
 - **Reasoning**: `OPENAI_REASONING` (default: high)
+
+### Financial Modeling Prep (for enhanced financial data)
+- **Status**: ✓ Configured
+- **Purpose**: More reliable financial data than Yahoo Finance
+- **Fallback**: Uses Yahoo Finance or mock data when API has issues
 
 ## Deployment
 Configured for Replit Autoscale deployment:
@@ -104,4 +102,10 @@ None specified yet.
 - All dependencies installed and verified
 - Database provisioned and accessible
 - Streamlit security settings configured for Replit environment
+- API keys configured (OpenAI + Financial Modeling Prep)
 - Ready to be published to production
+
+## How to Publish
+1. Click the **Publish** button in the top-right of your Replit workspace
+2. Choose your deployment options
+3. Your app will get a live URL that you can share with anyone
