@@ -7,14 +7,18 @@ from src.data.sec_fetcher import SECFetcher
 from src.data.market_data import get_market_snapshot
 from src.ui.styles import apply_ive_style
 
-st.set_page_config(page_title="SaaS EPV Analyzer", layout="wide")
+st.set_page_config(page_title="SaaS EPV Analyzer", layout="wide", initial_sidebar_state="expanded")
 apply_ive_style()
 
-st.title("SaaS Earnings Power Value (EPV) Analyzer")
+st.markdown("# 📊 SaaS Earnings Power Value (EPV) Analyzer")
 st.markdown("""
-This tool normalizes a SaaS company's Income Statement to find its "Steady State" earnings using the Bruce Greenwald EPV framework.
-It separates "Growth Investment" from "Maintenance" spend to reveal the true earnings power.
-""")
+<div style='background: linear-gradient(90deg, rgba(0, 122, 255, 0.05) 0%, rgba(52, 199, 89, 0.05) 100%); padding: 20px; border-radius: 16px; border-left: 4px solid #007AFF; margin-bottom: 30px;'>
+    <p style='margin: 0; color: #424245; font-size: 16px; line-height: 1.6;'>
+    This tool normalizes a SaaS company's Income Statement to find its <strong>"Steady State"</strong> earnings using the <strong>Bruce Greenwald EPV framework</strong>.
+    It separates "Growth Investment" from "Maintenance" spend to reveal the true earnings power.
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 # --- CACHED HELPERS ---
 @st.cache_data(show_spinner=False)
@@ -35,13 +39,13 @@ def get_ai_estimates(mda_text, financials):
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.header("Analysis Parameters")
-    ticker_input = st.text_input("Ticker Symbol", value="SHOP")
-    cost_of_capital = st.slider("Cost of Capital (WACC)", 0.05, 0.15, 0.10, 0.005)
+    st.markdown("## ⚙️ Analysis Parameters")
+    ticker_input = st.text_input("Ticker Symbol", value="SHOP", placeholder="e.g., AAPL, SHOP, NFLX")
+    cost_of_capital = st.slider("Cost of Capital (WACC)", 0.05, 0.15, 0.10, 0.005, help="Weighted Average Cost of Capital")
     
     st.divider()
     st.markdown("### 🤖 AI Sensitivity Overrides")
-    st.caption("Adjust the AI's estimated maintenance split.")
+    st.caption("Customize the AI's estimated maintenance split.")
 
     # Ticker Validation
     ticker_clean = ticker_input.strip().upper()
@@ -61,8 +65,9 @@ with st.sidebar:
     # Interactive Sliders initialized with AI values
     # Display current assumption overrides inline if possible
     st.markdown(f"""
-        <div style='margin-bottom: 10px; font-size: 12px; color: #666;'>
-            Current Assumptions: Maint S&M <b>{float(ai_result['maintenance_sga_percent']):.2f}</b> • Maint R&D <b>{float(ai_result['maintenance_rnd_percent']):.2f}</b>
+        <div style='background-color: #F0F7FF; padding: 12px 14px; border-radius: 10px; border-left: 3px solid #007AFF; margin-bottom: 16px; font-size: 13px;'>
+            <p style='margin: 0; color: #007AFF; font-weight: 500;'>AI Estimates:</p>
+            <p style='margin: 4px 0 0 0; color: #505054;'>Maint S&M: <b>{float(ai_result['maintenance_sga_percent']):.1%}</b> • Maint R&D: <b>{float(ai_result['maintenance_rnd_percent']):.1%}</b></p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -129,23 +134,26 @@ rule_40_adj = model.calculate_rule_of_40(rev_growth, adj_margin)
 col1, col2 = st.columns([1, 1.2], gap="large")
 
 with col1:
-    st.subheader("GAAP (Reported)")
+    st.markdown("### 📈 GAAP (Reported)")
     st.metric(label="Reported EBIT", value=f"${financials['ebit']/1e9:.1f}B", delta_color="off")
     st.metric(label="Rule of 40", value=f"{rule_40_gaap:.1f}%")
     
     with st.container():
-        st.caption(f"GAAP Rule of 40: {rule_40_gaap:.1f}% (Growth {rev_growth:.1f}% + Margin {gaap_margin:.1f}%)")
-        st.caption("Reported earnings heavily penalized by Growth Capex.")
+        st.caption(f"**GAAP Rule of 40:** {rule_40_gaap:.1f}% (Growth {rev_growth:.1f}% + Margin {gaap_margin:.1f}%)")
+        st.caption("*Reported earnings heavily penalized by Growth Capex*")
 
 with col2:
-    st.subheader("AI-Adjusted EPV")
+    st.markdown("### 🚀 AI-Adjusted EPV")
     
     # Metrics Grid
     c1, c2 = st.columns(2)
     c1.metric(label="Normalized EBIT", value=f"${results['normalized_ebit']/1e9:.1f}B", delta=f"+${(results['normalized_ebit'] - financials['ebit'])/1e9:.1f}B")
     c2.metric(label="Adjusted Rule of 40", value=f"{rule_40_adj:.1f}%", delta=f"{rule_40_adj - rule_40_gaap:.1f}% Upgrade")
     
-    st.success(f"Adjusted Rule of 40: {rule_40_adj:.1f}% (Growth {rev_growth:.1f}% + Adj Margin {adj_margin:.1f}%)")
+    if rule_40_adj >= 40:
+        st.success(f"✓ **Strong:** Rule of 40 = {rule_40_adj:.1f}% (Growth {rev_growth:.1f}% + Margin {adj_margin:.1f}%)")
+    else:
+        st.info(f"Rule of 40 = {rule_40_adj:.1f}% (Growth {rev_growth:.1f}% + Margin {adj_margin:.1f}%)")
     
     st.markdown("---")
     
@@ -165,7 +173,7 @@ with col2:
     repro_value = model.calculate_reproduction_value(financials)
     franchise_value = firm_epv - repro_value
     
-    st.subheader("Valuation Conclusion")
+    st.markdown("### 💎 Valuation Conclusion")
     
     # Metrics Row
     m1, m2, m3 = st.columns(3)
@@ -176,7 +184,7 @@ with col2:
     # Footnote for EPV
     st.caption("Note: Firm EPV assumes zero growth. It is the steady-state earnings power capitalized at WACC.")
     
-    st.markdown("#### Per Share Analysis")
+    st.markdown("#### 📌 Per Share Analysis")
     
     # Per Share Metrics
     ps1, ps2, ps3 = st.columns(3)
@@ -190,8 +198,8 @@ with col2:
         ps3.metric(label="Downside", value=f"{upside:.1f}%", delta=f"{upside:.1f}%")
     
     st.markdown("---")
-    st.subheader("🏰 Durability & Moat Analysis")
-    st.caption("Comparison of Earnings Power (EPV) vs. Cost to Replicate (Reproduction Value). Positive Franchise Value indicates a Moat.")
+    st.markdown("### 🏰 Durability & Moat Analysis")
+    st.markdown("<p style='color: #86868B; font-size: 14px; margin-bottom: 1rem;'>Earnings Power (EPV) vs. Cost to Replicate. Positive Franchise Value indicates a competitive moat.</p>", unsafe_allow_html=True)
     
     d1, d2 = st.columns(2)
     d1.metric(label="Reproduction Value (Assets)", value=f"${repro_value/1e9:.1f}B", help="Cost to replicate the platform (Book Equity + R&D Adj)")
@@ -227,7 +235,7 @@ with col2:
 st.markdown("---")
 
 # --- CHARTING ---
-st.subheader("GAAP vs True Earnings Power")
+st.markdown("### 📊 GAAP vs True Earnings Power")
 
 # Create two charts side-by-side
 chart_col1, chart_col2 = st.columns(2)
@@ -285,7 +293,7 @@ with chart_col2:
 st.markdown("---")
 
 # AI Reasoning Section
-st.subheader("🧐 AI Analyst Reasoning")
+st.markdown("### 🧐 AI Analyst Reasoning")
 with st.expander("See Detailed Analysis", expanded=False):
     if "⚠️" in ai_result['reasoning']:
         st.warning(ai_result['reasoning'])
