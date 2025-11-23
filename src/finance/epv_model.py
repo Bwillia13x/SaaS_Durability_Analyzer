@@ -1,4 +1,19 @@
-# src/finance/epv_model.py
+"""
+Greenwald EPV Financial Model
+
+Implements the Bruce Greenwald Earnings Power Value (EPV) methodology for valuing 
+SaaS businesses. The core concept is that true earnings power can be extracted by:
+
+1. Normalizing income statements (separating growth capex from maintenance capex)
+2. Calculating NOPAT (Net Operating Profit After Tax)
+3. Capitalizing NOPAT at WACC to get firm EPV (zero-growth perpetuity)
+4. Estimating reproduction value (asset base) for moat analysis
+5. Computing franchise value as the difference (competitive advantage)
+
+This approach reveals the sustainable, maintenance-level earnings power of a business,
+distinguishing it from the inflated earnings during high-growth phases.
+"""
+
 
 class GreenwaldEPV:
     def calculate_reproduction_value(self, balance_sheet):

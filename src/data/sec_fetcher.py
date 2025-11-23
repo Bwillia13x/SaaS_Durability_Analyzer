@@ -1,4 +1,18 @@
-# src/data/sec_fetcher.py
+"""
+SEC EDGAR Financial Data Fetcher
+
+Retrieves real-time financial data and MD&A (Management Discussion & Analysis) 
+sections from SEC EDGAR filings. This module handles:
+
+- Fetching the latest 10-K forms for companies
+- Extracting balance sheet and income statement data
+- Parsing MD&A sections for qualitative analysis
+- Error handling and fallback to mock data
+
+The fetcher gracefully handles API failures and provides mock data when live 
+data is unavailable, ensuring the application always has data to analyze.
+"""
+
 import os
 import re
 import time

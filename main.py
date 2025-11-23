@@ -1,3 +1,17 @@
+"""
+SaaS Earnings Power Value (EPV) Analyzer
+
+A professional-grade financial analysis platform that evaluates SaaS companies using 
+the Bruce Greenwald EPV framework. This application normalizes income statements to 
+reveal true earnings power by separating growth investments from maintenance spending.
+
+The application fetches real-time market data, analyzes SEC filings with AI, and 
+provides comprehensive valuation metrics including moat analysis and Rule of 40 scoring.
+
+Author: Financial Analysis Team
+Framework: Streamlit + Greenwald EPV Methodology
+"""
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px

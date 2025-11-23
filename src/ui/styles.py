@@ -1,4 +1,21 @@
+"""
+UI Styling Module - Jony Ives Design Philosophy
+
+Implements a minimalist, refined user interface based on Jony Ives' design principles:
+
+- Pure white backgrounds (#FFFFFF) as fundamental material
+- Typography as the primary design element
+- Generous negative space for breathing room
+- Minimal color palette (black, white, subtle grays)
+- Refined details: subtle shadows, smooth transitions, no decorations
+- Essential elements only - premium through restraint
+
+This styling creates a luxury interface through simplicity, allowing data and 
+typography to shine without visual clutter.
+"""
+
 import streamlit as st
+
 
 def apply_ive_style():
     st.markdown("""

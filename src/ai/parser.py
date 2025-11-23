@@ -1,8 +1,24 @@
-# src/ai/parser.py
+"""
+AI Response Parser for Financial Analysis
+
+Analyzes MD&A (Management Discussion & Analysis) text from SEC filings using 
+OpenAI to estimate the split between maintenance and growth spending.
+
+The parser:
+- Submits MD&A context to GPT for intelligent estimation
+- Parses JSON responses with error handling
+- Falls back to conservative defaults if AI is unavailable
+- Implements retry logic for resilience
+
+This enables the EPV model to normalize earnings by distinguishing between 
+maintenance capex (required to sustain business) and growth capex (for expansion).
+"""
+
 import json
 import time
 from src.ai.prompts import EPV_ANALYSIS_SYSTEM_PROMPT
 from src.ai.client import get_llm_response
+
 
 def analyze_growth_spend(mda_text, financials_json):
     """

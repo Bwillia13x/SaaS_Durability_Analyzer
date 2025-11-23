@@ -10,5 +10,11 @@ venv/
 *.egg-info/
 .ipynb_checkpoints/
 .streamlit/secrets.toml
+.streamlit/cache/
 *.log
 .cache/
+.pytest_cache/
+__pycache__
+*.egg-info
+.mypy_cache/
+.ruff_cache/

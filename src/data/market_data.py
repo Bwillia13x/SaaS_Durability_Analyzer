@@ -1,8 +1,20 @@
+"""
+Market Data Retrieval Module
+
+Fetches real-time market data (prices, market cap, company names) from multiple sources.
+Prioritizes Financial Modeling Prep API if available, falls back to yfinance, and 
+finally uses mock data if both fail.
+
+This module ensures the application always has market data for valuation comparisons,
+even when external APIs are temporarily unavailable.
+"""
+
 import os
 import time
 import requests
 import yfinance as yf
 import pandas as pd
+
 
 def get_market_snapshot(ticker):
     """
