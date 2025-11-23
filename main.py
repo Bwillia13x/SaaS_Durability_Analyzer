@@ -254,7 +254,7 @@ with chart_col1:
         yaxis=dict(showgrid=True, gridcolor="#E5E5E5"),
         xaxis=dict(showgrid=False)
     )
-    st.plotly_chart(fig_earnings, use_container_width=True)
+    st.plotly_chart(fig_earnings, use_container_width=True, width='stretch')
 
 with chart_col2:
     st.caption("Valuation Gap ($B)")
@@ -279,7 +279,7 @@ with chart_col2:
         yaxis=dict(showgrid=True, gridcolor="#E5E5E5"),
         xaxis=dict(showgrid=False)
     )
-    st.plotly_chart(fig_val, use_container_width=True)
+    st.plotly_chart(fig_val, use_container_width=True, width='stretch')
 
 st.markdown("---")
 
