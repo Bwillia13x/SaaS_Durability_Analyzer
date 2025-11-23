@@ -3,244 +3,233 @@ import streamlit as st
 def apply_ive_style():
     st.markdown("""
         <style>
-        /* Main App Background with subtle gradient */
+        /* Jony Ives Design Philosophy: Extreme Simplicity and Refinement */
+        
+        /* Pure white background - fundamental material */
         .stApp {
-            background: linear-gradient(135deg, #F5F5F7 0%, #FAFAFA 100%);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #FFFFFF;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
         }
         
-        /* Sidebar Styling */
+        /* Sidebar - minimal, clean */
         section[data-testid="stSidebar"] {
-            background: linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%);
-            border-right: 1px solid #E8E8E8;
+            background-color: #FFFFFF;
+            border-right: 1px solid #F5F5F5;
         }
         
         section[data-testid="stSidebar"] .block-container {
-            padding-top: 2.5rem;
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
-        }
-        
-        /* Main container padding */
-        .main .block-container {
+            padding-top: 3rem;
             padding-left: 2rem;
             padding-right: 2rem;
-            padding-top: 2rem;
         }
         
-        /* Typography */
+        /* Main container - generous spacing */
+        .main .block-container {
+            padding-left: 3rem;
+            padding-right: 3rem;
+            padding-top: 3rem;
+            max-width: 1200px;
+        }
+        
+        /* Typography: Typography is the primary design element */
         h1, h2, h3, h4, h5, h6 {
             font-weight: 600;
-            color: #1D1D1F;
-            letter-spacing: -0.02em;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
+            color: #000000;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
         }
         
         h1 {
-            font-size: 2.75rem;
-            font-weight: 700;
-            color: #1D1D1F;
-            margin-bottom: 1rem;
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            margin-top: 0;
+            color: #000000;
         }
         
         h2 {
-            font-size: 1.6rem;
-            color: #1D1D1F;
+            font-size: 1.75rem;
             font-weight: 600;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #000000;
         }
         
         h3 {
             font-size: 1.25rem;
-            color: #1D1D1F;
-            font-weight: 600;
-            margin-top: 1.25rem;
-            margin-bottom: 0.75rem;
+            font-weight: 500;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #000000;
         }
         
         h4 {
-            font-size: 1.05rem;
-            color: #1D1D1F;
+            font-size: 1rem;
             font-weight: 500;
             margin-top: 1rem;
+            margin-bottom: 0.75rem;
+            color: #1D1D1F;
         }
         
-        p, label, .stMarkdown {
+        /* Body text */
+        p, label, .stMarkdown, body {
             color: #505054;
             font-weight: 400;
-            line-height: 1.6;
+            line-height: 1.7;
+            font-size: 16px;
         }
         
-        /* Metrics Cards - Enhanced */
+        /* Metric Cards - Refined simplicity */
         [data-testid="stMetric"] {
-            background: #FFFFFF;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            border: 1px solid #EFEFEF;
-            transition: all 0.25s ease;
+            background-color: #FFFFFF;
+            padding: 28px 24px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #F5F5F5;
+            transition: all 0.2s ease;
         }
         
         [data-testid="stMetric"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
             border-color: #E5E5E5;
         }
         
+        /* Metric Label - Subtle, minimal */
         [data-testid="stMetricLabel"] {
-            color: #86868B;
-            font-size: 13px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: #767680;
+            font-size: 12px;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: 0;
+            margin-bottom: 8px;
         }
         
+        /* Metric Value - Large, dominant */
         [data-testid="stMetricValue"] {
-            color: #1D1D1F;
-            font-size: 32px;
-            font-weight: 700;
-            margin-top: 0.5rem;
+            color: #000000;
+            font-size: 36px;
+            font-weight: 600;
+            margin-top: 0;
+            line-height: 1.2;
         }
         
+        /* Metric Delta */
         [data-testid="stMetricDelta"] {
-            font-weight: 600;
-            font-size: 14px;
-            margin-top: 0.5rem;
+            font-weight: 500;
+            font-size: 13px;
+            margin-top: 6px;
+            color: #767680;
         }
         
-        /* Buttons - Enhanced */
+        /* Buttons - Minimal, refined */
         .stButton > button {
-            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
-            color: white;
-            border: none;
-            border-radius: 24px;
-            padding: 12px 28px;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.25);
-            transition: all 0.3s ease;
-            font-size: 15px;
+            background-color: #000000;
+            color: #FFFFFF;
+            border: 1px solid #000000;
+            border-radius: 6px;
+            padding: 10px 24px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            box-shadow: none;
         }
         
         .stButton > button:hover {
-            background: linear-gradient(135deg, #0066D6 0%, #003D9E 100%);
-            box-shadow: 0 8px 20px rgba(0, 122, 255, 0.35);
-            transform: translateY(-1px);
+            background-color: #1D1D1F;
+            border-color: #1D1D1F;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
         
         /* Sliders */
         .stSlider [data-baseweb="slider"] {
             margin-top: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
         
-        /* Text Input */
+        /* Text Input - Minimal borders */
         .stTextInput > div > div > input {
-            border-radius: 12px;
-            border: 1.5px solid #E5E5E5;
-            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid #D5D5D7;
+            padding: 10px 12px;
             font-size: 15px;
             transition: all 0.2s ease;
         }
         
         .stTextInput > div > div > input:focus {
-            border-color: #007AFF;
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+            border-color: #000000;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
         }
         
-        /* Alerts/Info Boxes */
+        /* Alerts - Simplified, minimal color */
         .stAlert {
             background-color: #FFFFFF;
-            border: none;
-            border-left: 4px solid #007AFF;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.08);
-            padding: 16px 20px;
-            margin: 16px 0;
+            border: 1px solid #E5E5E5;
+            border-left: 2px solid #767680;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 20px 0;
         }
         
         .stSuccess {
             border-left-color: #34C759 !important;
-            box-shadow: 0 2px 8px rgba(52, 199, 89, 0.12) !important;
         }
         
         .stError {
             border-left-color: #FF3B30 !important;
-            box-shadow: 0 2px 8px rgba(255, 59, 48, 0.12) !important;
         }
         
         .stWarning {
             border-left-color: #FF9500 !important;
-            box-shadow: 0 2px 8px rgba(255, 149, 0, 0.12) !important;
         }
         
         .stInfo {
             border-left-color: #007AFF !important;
-            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.12) !important;
         }
         
-        /* Dividers */
+        /* Dividers - Very subtle */
         hr {
             border: none;
-            border-top: 1px solid #E8E8E8;
-            margin: 40px 0;
+            border-top: 1px solid #F5F5F5;
+            margin: 3rem 0;
         }
         
         /* Expander */
         .streamlit-expanderHeader {
-            background-color: #F8F8FA;
-            border-radius: 12px;
+            background-color: #FFFFFF;
             border: 1px solid #E5E5E5;
+            border-radius: 6px;
             transition: all 0.2s ease;
         }
         
         .streamlit-expanderHeader:hover {
-            background-color: #F0F0F2;
-            border-color: #D0D0D2;
+            background-color: #F5F5F5;
+            border-color: #D5D5D7;
         }
         
-        /* Plotly Chart Container */
+        /* Plotly Charts - Transparent background */
         .js-plotly-plot .plotly .main-svg {
             background-color: transparent !important;
         }
         
-        /* Custom Classes for Containers */
-        .card-container {
-            background: linear-gradient(135deg, #FFFFFF 0%, #FAFAFA 100%);
-            padding: 28px;
-            border-radius: 20px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-            margin-bottom: 24px;
-            border: 1px solid #F0F0F0;
-        }
-        
-        /* Section containers */
-        .section-header {
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid rgba(0, 122, 255, 0.15);
-        }
-        
-        /* Caption styling */
+        /* Caption - Refined color */
         .stCaption {
-            color: #86868B;
+            color: #767680;
             font-size: 13px;
-            line-height: 1.5;
-            margin-top: 0.5rem;
+            line-height: 1.6;
         }
         
-        /* Improved spacing */
+        /* Columns - Better spacing */
         .stColumnContainer > .stColumn {
-            gap: 20px;
+            gap: 32px;
+        }
+        
+        /* Remove unnecessary borders and decorations */
+        [data-testid="stColumn"] {
+            padding: 0;
         }
         </style>
     """, unsafe_allow_html=True)
 
 def card_container(key=None):
-    """
-    Helper to create a styled container. 
-    Streamlit doesn't allow direct HTML wrapping of widgets easily, 
-    so we just use this to mark sections if needed or inject CSS classes.
-    """
+    """Minimal container for sections."""
     return st.container()
