@@ -5,3 +5,9 @@ yfinance
 requests
 python-dotenv
 plotly
+openai
+pandas
+python-dotenv
+requests
+streamlit
+yfinance
