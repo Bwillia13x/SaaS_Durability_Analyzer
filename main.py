@@ -10,7 +10,7 @@ from src.ui.styles import apply_ive_style
 st.set_page_config(page_title="SaaS EPV Analyzer", layout="wide", initial_sidebar_state="expanded")
 apply_ive_style()
 
-st.markdown("# 📊 SaaS Earnings Power Value (EPV) Analyzer")
+st.markdown("# SaaS Earnings Power Value (EPV) Analyzer")
 st.markdown("""
 <div style='background: linear-gradient(90deg, rgba(0, 122, 255, 0.05) 0%, rgba(52, 199, 89, 0.05) 100%); padding: 20px; border-radius: 16px; border-left: 4px solid #007AFF; margin-bottom: 30px;'>
     <p style='margin: 0; color: #424245; font-size: 16px; line-height: 1.6;'>
