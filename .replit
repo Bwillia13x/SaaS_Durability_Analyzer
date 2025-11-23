@@ -34,10 +34,6 @@ outputType = "webview"
 localPort = 5000
 externalPort = 80
 
-[[ports]]
-localPort = 41893
-externalPort = 3000
-
 [deployment]
 deploymentTarget = "autoscale"
 run = ["streamlit", "run", "main.py", "--server.port=5000", "--server.address=0.0.0.0"]
