@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import MagicMock, patch
 import json
 from src.ai.parser import analyze_growth_spend
-from src.ai.prompts import EPV_ANALYSIS_SYSTEM_PROMPT
 
 class TestAIParser(unittest.TestCase):
     def setUp(self):
