@@ -20,6 +20,7 @@ from src.ai.parser import analyze_growth_spend
 from src.data.sec_fetcher import SECFetcher
 from src.data.market_data import get_market_snapshot
 from src.ui.styles import apply_ive_style
+from src.ui.export import generate_markdown_report
 
 st.set_page_config(page_title="SaaS EPV Analyzer", layout="wide", initial_sidebar_state="expanded")
 apply_ive_style()
@@ -92,6 +93,8 @@ with st.sidebar:
         help="Portion of R&D required to maintain the platform."
     )
     
+    st.markdown("---")
+    st.markdown("## Reports")
 
 # --- MAIN APP LOGIC ---
 if market_data.get('company_name'):
@@ -298,6 +301,28 @@ with st.expander("See Detailed Analysis", expanded=False):
     st.markdown("### Detailed Adjustments")
     st.json(current_adjustments)
 
-# Summary Chip
-summary_text = f"AI Estimate: {ai_result['maintenance_sga_percent']*100:.0f}% Maint S&M, {ai_result['maintenance_rnd_percent']*100:.0f}% Maint R&D"
+    # Generate Report for Download
+    report_md = generate_markdown_report(
+        ticker_clean,
+        market_data,
+        financials,
+        results,
+        epv_value,
+        equity_epv,
+        repro_value,
+        franchise_value,
+        ai_result['reasoning']
+    )
+
+    with st.sidebar:
+        st.download_button(
+            label="Download Analysis Report",
+            data=report_md,
+            file_name=f"{ticker_clean}_EPV_Analysis.md",
+            mime="text/markdown",
+            help="Download a Markdown report of this analysis."
+        )
+
+    # Summary Chip
+    summary_text = f"AI Estimate: {ai_result['maintenance_sga_percent']*100:.0f}% Maint S&M, {ai_result['maintenance_rnd_percent']*100:.0f}% Maint R&D"
 st.caption(f"Summary: {summary_text}")
